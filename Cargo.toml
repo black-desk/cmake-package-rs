@@ -3,8 +3,8 @@ name = "cmake-package"
 version = "0.1.13"
 authors = ["Daniel Vrátil <dvratil@kde.org>"]
 license = "MIT"
-repository = "https://github.com/danvratil/cmake-package-rs"
-homepage = "https://github.com/danvratil/cmake-package-rs"
+repository = "https://codeberg.org/danvratil/cmake-package-rs"
+homepage = "https://codeberg.org/danvratil/cmake-package-rs"
 documentation = "https://docs.rs/cmake-package"
 description = """
 A helper library for Cargo build-scripts to find and link against existing CMake packages.
