@@ -1,0 +1,60 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+name: CI
+
+jobs:
+  build:
+    name: "Build and Test"
+    runs-on: docker
+    env:
+      CARGO_TERM_COLOR: always
+      RUSTFLAGS: "-D warnings"
+      RUST_BACKTRACE: full
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ forgejo.event.pull_request.head.sha }}
+
+      - uses: https://github.com/actions-rs/toolchain@v1
+        name: Install toolchain
+        with:
+            toolchain: stable
+            override: true
+
+      - name: Install cmake
+        run: apt-get update && apt-get install -y cmake
+
+      - name: Build cmake-package
+        uses: https://github.com/actions-rs/cargo@v1
+        with:
+          command: build
+          args: --all-targets --all-features --locked
+
+      - name: Doctests
+        uses: https://github.com/actions-rs/cargo@v1
+        with:
+          command: test
+          args: --doc --all-features --locked
+
+      - name: Install nextest
+        uses: https://github.com/taiki-e/install-action@nextest
+
+      - name: Tests
+        uses: https://github.com/actions-rs/cargo@v1
+        with:
+          command: nextest
+          args: run --all-features --profile ci --locked
+
+      - uses: forgejo/upload-artifact@v4
+        name: Upload test results
+        if: success() || failure()
+        with:
+          name: test-results
+          path: target/nextest/ci/test-report.junit.xml
