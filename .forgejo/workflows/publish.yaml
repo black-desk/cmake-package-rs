@@ -35,7 +35,7 @@ jobs:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
         with:
           command: publish
-          args: --locked --dry-run
+          args: --locked
 
       - name: Create release
         uses: https://code.forgejo.org/actions/forgejo-release@v2.11.1
