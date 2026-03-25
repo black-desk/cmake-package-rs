@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.14 (2026-03-25)
+* Migrate from Github to Codeberg
+* Replace Github Actions with Forgejo Actions
+* Update links/Github references
+
 ## 0.1.13 (2026-03-14)
 * Add support for NAMES in find_package (#117)
 * Update dependencies
