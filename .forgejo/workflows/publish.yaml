@@ -1,0 +1,38 @@
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+name: Publish
+
+jobs:
+  test:
+    runs-on: docker
+    uses: ./.forgejo/workflows/ci.yml
+
+  publish:
+    name: "Publish to crates.io"
+    runs-on: docker
+    needs: [test]
+    env:
+      CARGO_TERM_COLOR: always
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ forgejo.event.pull_request.head.sha }}
+
+      - uses: https://github.com/actions-rs/toolchain@v1
+        name: Install toolchain
+        with:
+            toolchain: stable
+            override: true
+
+      - name: Build cmake-package
+        uses: https://github.com/actions-rs/cargo@v1
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        with:
+          command: publish
+          args: --locked --dry-run
+
