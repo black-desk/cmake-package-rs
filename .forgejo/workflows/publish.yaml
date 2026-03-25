@@ -38,7 +38,7 @@ jobs:
           args: --locked --dry-run
 
       - name: Create release
-        uses: https://code.forgejo.org/actions/forgejo-release
+        uses: https://code.forgejo.org/actions/forgejo-release@v2.11.1
         with:
           direction: "upload"
           release-notes-assistant: true
