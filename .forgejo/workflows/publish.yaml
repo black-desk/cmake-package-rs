@@ -8,7 +8,7 @@ name: Publish
 jobs:
   test:
     runs-on: docker
-    uses: ./.forgejo/workflows/ci.yml
+    uses: ./.forgejo/workflows/ci.yaml
 
   publish:
     name: "Publish to crates.io"
