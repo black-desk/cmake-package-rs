@@ -255,7 +255,7 @@ fn link_name(lib: &str) -> &str {
 
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 fn link_dir(lib: &str) -> Option<&str> {
-    static RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"(.*)/lib[^/]+\.so.*").unwrap());
+    static RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"(.*)/lib[^/]+\.(?:so|dylib|a).*").unwrap());
     RE.captures(lib)?.get(1).map(|f| f.as_str())
 }
 
@@ -290,7 +290,8 @@ impl CMakeTarget {
             if lib.starts_with("-") {
                 writeln!(io, "cargo:rustc-link-arg={}", lib).unwrap();
             } else {
-                writeln!(io, "cargo:rustc-link-lib=dylib={}", link_name(lib)).unwrap();
+                let kind = if lib.ends_with(".a") { "static" } else { "dylib" };
+                writeln!(io, "cargo:rustc-link-lib={}={}", kind, link_name(lib)).unwrap();
             }
 
             if let Some(lib) = link_dir(lib) {
