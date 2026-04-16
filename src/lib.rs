@@ -312,6 +312,7 @@ pub struct FindPackageBuilder {
     names: Option<Vec<String>>,
     verbose: bool,
     prefix_paths: Option<Vec<PathBuf>>,
+    defines: Vec<(String, String)>,
 }
 
 impl FindPackageBuilder {
@@ -323,6 +324,7 @@ impl FindPackageBuilder {
             names: None,
             verbose: false,
             prefix_paths: None,
+            defines: Vec::new(),
         }
     }
 
@@ -385,6 +387,20 @@ impl FindPackageBuilder {
         }
     }
 
+    /// Add a custom CMake cache variable definition (`-DKEY=VALUE`) that will be passed
+    /// to the `cmake` invocation. This is useful when the CMake package's Find-module
+    /// or config-file depends on extra variables (e.g. `Boost_USE_STATIC_LIBS`).
+    ///
+    /// Can be called multiple times to add multiple definitions.
+    pub fn define(
+        mut self,
+        key: impl Into<String>,
+        value: impl Into<String>,
+    ) -> Self {
+        self.defines.push((key.into(), value.into()));
+        self
+    }
+
     // Specify prefix paths.
     // This sets directories to be searched for the package.
     // [cmake_prefix_path]: https://cmake.org/cmake/help/latest/variable/CMAKE_PREFIX_PATH.html
@@ -405,6 +421,7 @@ impl FindPackageBuilder {
             self.names,
             self.verbose,
             self.prefix_paths,
+            self.defines,
         )
     }
 }

@@ -175,6 +175,7 @@ pub(crate) fn find_package(
     names: Option<Vec<String>>,
     verbose: bool,
     prefix_paths: Option<Vec<PathBuf>>,
+    defines: Vec<(String, String)>,
 ) -> Result<CMakePackage, Error> {
     // Find cmake or panic
     let cmake = find_cmake()?;
@@ -215,6 +216,9 @@ pub(crate) fn find_package(
     }
     if let Some(ref names) = names {
         command.arg(format!("-DNAMES={}", names.join(";")));
+    }
+    for (key, value) in &defines {
+        command.arg(format!("-D{}={}", key, value));
     }
     command.output().map_err(Error::IO)?;
 
