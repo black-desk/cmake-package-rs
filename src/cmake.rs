@@ -464,20 +464,8 @@ pub(crate) fn find_target(
         .stderr(stdio(package.verbose))
         .current_dir(package.working_directory.path())
         .arg(".")
-        .arg(format!("-DCMAKE_BUILD_TYPE={:?}", build_type))
-        .arg(format!("-DCMAKE_MIN_VERSION={CMAKE_MIN_VERSION}"))
-        .arg(format!("-DPACKAGE={}", package.name))
         .arg(format!("-DTARGET={}", target))
         .arg(format!("-DOUTPUT_FILE={}", output_file.display()));
-    if let Some(version) = package.version {
-        command.arg(format!("-DVERSION={}", version));
-    }
-    if let Some(components) = &package.components {
-        command.arg(format!("-DCOMPONENTS={}", components.join(";")));
-    }
-    if let Some(names) = &package.names {
-        command.arg(format!("-DNAMES={}", names.join(";")));
-    }
     command.output().ok()?;
 
     // Read from the generated JSON file
@@ -511,28 +499,15 @@ pub(crate) fn target_property(
         target.name.to_lowercase().replace(":", "_"),
         property.to_lowercase(),
     ));
-    let build_type = build_type();
     let mut command = Command::new(&package.cmake.path);
     command
         .stdout(stdio(package.verbose))
         .stderr(stdio(package.verbose))
         .current_dir(package.working_directory.path())
         .arg(".")
-        .arg(format!("-DCMAKE_BUILD_TYPE={:?}", build_type))
-        .arg(format!("-DCMAKE_MIN_VERSION={CMAKE_MIN_VERSION}"))
-        .arg(format!("-DPACKAGE={}", package.name))
         .arg(format!("-DTARGET={}", target.name))
         .arg(format!("-DPROPERTY={}", property))
         .arg(format!("-DOUTPUT_FILE={}", output_file.display()));
-    if let Some(version) = package.version {
-        command.arg(format!("-DVERSION={}", version));
-    }
-    if let Some(components) = &package.components {
-        command.arg(format!("-DCOMPONENTS={}", components.join(";")));
-    }
-    if let Some(names) = &package.names {
-        command.arg(format!("-DNAMES={}", names.join(";")));
-    }
     command.output().ok()?;
 
     // Read from the generated JSON file
